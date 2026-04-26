@@ -1,6 +1,7 @@
 # 🧠 Course Compass – Full Stack Course Management System
 
 A full-stack web application to search, explore, and get recommendations for university courses.
+
 Built using **Next.js, Node.js, MongoDB, and Redis** with performance optimization and AI-based recommendations.
 
 ---
@@ -62,6 +63,7 @@ Built using **Next.js, Node.js, MongoDB, and Redis** with performance optimizati
 ### 1️⃣ Clone Repository
 
 git clone https://github.com/Adity322/course-compass.git
+
 cd course-compass
 
 ---
@@ -71,13 +73,17 @@ cd course-compass
 ### Backend
 
 cd backend
+
 npm install
+
 node server.js
 
 ### Frontend
 
 cd frontend-modified
+
 npm install
+
 npm run dev
 
 ---
