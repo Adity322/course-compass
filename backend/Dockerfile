@@ -1,20 +1,32 @@
-# Stage 1: Base image
-FROM node:20-alpine
+# Stage 1: Build the Next.js app
+FROM node:20-alpine AS builder
 
-# Set working directory inside container
 WORKDIR /app
 
-# Copy package files first (better caching — only reinstalls if package.json changes)
 COPY package.json ./
 
-# Install only production dependencies
-RUN npm install --omit=dev
+RUN npm install
 
-# Copy rest of the backend source code
 COPY . .
 
-# Expose the port Express runs on
-EXPOSE 8000
+RUN npm run build
 
-# Start the server
-CMD ["node", "server.js"]
+# ---
+
+# Stage 2: Production image
+FROM node:20-alpine AS runner
+
+WORKDIR /app
+
+ENV NODE_ENV=production
+
+COPY --from=builder /app/package.json ./
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/next.config.ts ./
+COPY --from=builder /app/tailwind.config.ts ./
+COPY --from=builder /app/postcss.config.mjs ./
+
+EXPOSE 9002
+
+CMD ["npm", "run", "start", "--", "-p", "9002"]
