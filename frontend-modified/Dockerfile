@@ -1,40 +1,20 @@
-# Stage 1: Build the Next.js app
-FROM node:20-alpine AS builder
+# Stage 1: Base image
+FROM node:20-alpine
 
+# Set working directory inside container
 WORKDIR /app
 
-# Copy package files
+# Copy package files first (better caching — only reinstalls if package.json changes)
 COPY package.json ./
 
-# Install all dependencies (including devDependencies needed for build)
-RUN npm install
+# Install only production dependencies
+RUN npm install --omit=dev
 
-# Copy source code
+# Copy rest of the backend source code
 COPY . .
 
-# Build the Next.js app for production
-RUN npm run build
+# Expose the port Express runs on
+EXPOSE 8000
 
-# ---
-
-# Stage 2: Production image (smaller — only serves the built app)
-FROM node:20-alpine AS runner
-
-WORKDIR /app
-
-ENV NODE_ENV=production
-
-# Copy only what's needed to run the built app
-COPY --from=builder /app/package.json ./
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/next.config.ts ./
-COPY --from=builder /app/tailwind.config.ts ./
-COPY --from=builder /app/postcss.config.mjs ./
-
-# Expose the port Next.js runs on
-EXPOSE 9002
-
-# Start Next.js in production mode
-CMD ["npm", "run", "start"]
+# Start the server
+CMD ["node", "server.js"]
