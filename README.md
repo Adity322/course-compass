@@ -3,7 +3,7 @@
 A full-stack web application to search, explore, and get AI-powered recommendations for university courses. Built using Next.js, Node.js, MongoDB, Redis, and Docker.
 
 ---
-
+   
 ## 🚀 Features
 
 ### 🔐 Authentication
